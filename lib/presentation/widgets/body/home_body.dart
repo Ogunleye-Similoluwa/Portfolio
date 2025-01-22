@@ -107,44 +107,49 @@ class _HomeBodyState extends State<HomeBody> {
           }
         }
       },
-      child: Stack(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: context.width * .08),
-            child: SingleChildScrollView(
-              controller: _controller,
-              child: Column(
-                children: [
-                  IntroSection(key: introKey),
-                  
-                  // Featured Production Apps Section
-                  const SectionTitle(title: 'Production Applications'),
-                  FeaturedAppsShowcase(
-                    apps: [
-                      AppConstants.projects[0], // Npod
-                      AppConstants.projects[1], // Reals
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: constraints.maxWidth * 0.08,
+                ),
+                child: SingleChildScrollView(
+                  controller: _controller,
+                  child: Column(
+                    children: [
+                      IntroSection(key: introKey),
+                      
+                      // Featured Production Apps Section with responsive layout
+                      const SectionTitle(title: 'Production Applications'),
+                      constraints.maxWidth > 800
+                          ? FeaturedAppsShowcase(
+                              apps: [
+                                AppConstants.projects[0],
+                                AppConstants.projects[1],
+                              ],
+                            )
+                          : Column(
+                              children: [
+                                FeaturedAppCard(project: AppConstants.projects[0]),
+                                FeaturedAppCard(project: AppConstants.projects[1]),
+                              ],
+                            ),
+                      
+                      const SkillsShowcaseSection(),
+                      AboutMeSection(key: aboutKey),
+                      ProjectsSection(key: projectKey),
+                      ContactSection(key: contactKey),
                     ],
                   ),
-                  
-                  // Skills Section with Animation
-                  const SkillsShowcaseSection(),
-                  
-                  // About Section
-                  AboutMeSection(key: aboutKey),
-                  
-                  // Main Projects Grid
-                  const SectionTitle(title: AppStrings.featuredProjects),
-                  ProjectsSection(key: projectKey),
-                  
-                  // Contact Section
-                  ContactSection(key: contactKey),
-                ],
+                ),
               ),
-            ),
-          ),
-          const VerticalHeadersBuilder(),
-          const FloatingActionButtons(),
-        ],
+              const VerticalHeadersBuilder(),
+              const FloatingActionButtons(),
+            ],
+          );
+        },
       ),
     );
   }
@@ -175,6 +180,15 @@ class FeaturedAppCard extends StatelessWidget {
   
   const FeaturedAppCard({required this.project, super.key});
 
+  Future<void> _launchURL(String? url) async {
+    if (url != null) {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, webOnlyWindowName: '_blank');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -198,30 +212,20 @@ class FeaturedAppCard extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // App Icon/Image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: Image.asset(
-              project.imageUrl,
-              height: 80,
-              width: 80,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(height: 20),
-          
-          // App Name with Live Badge
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                project.name,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Image.asset(
+                  project.imageUrl,
+                  height: 80,
+                  width: 80,
+                  fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(width: 10),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -232,7 +236,7 @@ class FeaturedAppCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Text(
-                  'LIVE',
+                  'LIVE ON PLAY STORE',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -241,34 +245,37 @@ class FeaturedAppCard extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 20),
+          
+          Text(
+            project.name,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 16),
           
-          // Description
           Text(
             project.description,
             style: const TextStyle(fontSize: 16),
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 24),
           
-          // Action Buttons
-          Row(
-            children: [
-              ElevatedButton.icon(
-                onPressed: () => project.googlePlay != null 
-                    ? launchUrl(Uri.parse(project.googlePlay!))
-                    : null,
-                icon: const Icon(Icons.play_arrow),
-                label: const Text('Play Store'),
+          Center(
+            child: ElevatedButton.icon(
+              onPressed: () => _launchURL(project.googlePlay),
+              icon: const Icon(Icons.play_arrow),
+              label: const Text('Download on Play Store'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
-              const SizedBox(width: 12),
-              OutlinedButton.icon(
-                onPressed: () => project.previewLink != null 
-                    ? launchUrl(Uri.parse(project.previewLink!))
-                    : null,
-                icon: const Icon(Icons.remove_red_eye),
-                label: const Text('Preview'),
-              ),
-            ],
+            ),
           ),
         ],
       ),

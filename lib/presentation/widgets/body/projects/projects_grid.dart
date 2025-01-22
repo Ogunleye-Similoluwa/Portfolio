@@ -8,14 +8,28 @@ class ProjectsGrid extends StatelessWidget {
 
   const ProjectsGrid({required this.projects, super.key});
 
+  int _getCrossAxisCount(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    if (width > 1200) return 3;
+    if (width > 800) return 2;
+    return 1;
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    if (width > 1200) return 1.5;
+    if (width > 800) return 1.3;
+    return 1.1;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        childAspectRatio: 1.5,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: _getCrossAxisCount(context),
+        childAspectRatio: _getChildAspectRatio(context),
         crossAxisSpacing: 20,
         mainAxisSpacing: 20,
       ),
@@ -28,6 +42,19 @@ class ProjectsGrid extends StatelessWidget {
 class ProjectCard extends StatelessWidget {
   final Project project;
   const ProjectCard({required this.project, super.key});
+
+  String _getGithubUrl(String projectName) {
+    return 'https://github.com/Ogunleye-Similoluwa/$projectName';
+  }
+
+  Future<void> _launchURL(String? url) async {
+    if (url != null) {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, webOnlyWindowName: '_blank');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,34 +73,50 @@ class ProjectCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            project.name,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  project.name,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.code),
+                onPressed: () => _launchURL(_getGithubUrl(project.name)),
+                tooltip: 'View Source Code',
+              ),
+            ],
           ),
           const SizedBox(height: 10),
           Expanded(
             child: Text(
               project.description,
-              maxLines: 3,
+              style: const TextStyle(fontSize: 16),
               overflow: TextOverflow.ellipsis,
+              maxLines: 3,
             ),
           ),
           const SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              if (project.githubRepoLink != null)
-                IconButton(
-                  icon: const Icon(Icons.code),
-                  onPressed: () => launchUrl(Uri.parse(project.githubRepoLink!)),
-                ),
               if (project.previewLink != null)
-                IconButton(
+                TextButton.icon(
                   icon: const Icon(Icons.remove_red_eye),
-                  onPressed: () => launchUrl(Uri.parse(project.previewLink!)),
+                  label: const Text('Preview'),
+                  onPressed: () => _launchURL(project.previewLink),
+                ),
+              if (project.googlePlay != null)
+                TextButton.icon(
+                  icon: const Icon(Icons.play_arrow),
+                  label: const Text('Play Store'),
+                  onPressed: () => _launchURL(project.googlePlay),
                 ),
             ],
           ),
