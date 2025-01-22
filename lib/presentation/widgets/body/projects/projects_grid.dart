@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../data/models/project.dart';
 import '../../../../core/utils/app_colors.dart';
 
