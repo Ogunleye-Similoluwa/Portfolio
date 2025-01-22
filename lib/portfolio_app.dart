@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'config/theme_manager.dart';
+import 'config/theme/theme_manager.dart';
 import 'presentation/blocs/home_bloc/home_bloc.dart';
 import 'presentation/views/home_view.dart';
 
