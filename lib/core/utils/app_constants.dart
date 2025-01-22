@@ -9,19 +9,19 @@ abstract class AppConstants {
       service: 'MOBILE DEVELOPMENT',
       logo: AppAssets.androidLogo,
       description:
-          'Expert Flutter development with clean architecture, beautiful UI/UX, and cross-platform solutions. Specializing in high-performance mobile applications.',
+          'Passionate Flutter developer creating elegant, user-centric mobile applications. Committed to clean code, performance optimization, and exceptional user experiences.',
     ),
     CustomService(
-      service: 'FULL STACK SOLUTIONS',
+      service: 'COLLABORATIVE APPROACH',
       logo: AppAssets.uiDesignLogo,
       description:
-          'End-to-end application development combining Flutter frontend with Spring Boot and Django backends. Building scalable and maintainable solutions.',
+          'Strong team player with excellent communication skills. Experienced in agile environments, peer code reviews, and knowledge sharing. Always eager to learn and adapt to new technologies.',
     ),
     CustomService(
-      service: 'AI INTEGRATION',
+      service: 'PROBLEM SOLVING',
       logo: AppAssets.scrappingLogo,
       description:
-          'Implementing cutting-edge AI features including speech recognition, natural language processing, and smart automation. Creating intelligent and interactive applications.',
+          'Analytical thinker with a proven track record of solving complex technical challenges. Dedicated to continuous learning and staying updated with industry best practices and emerging technologies.',
     ),
   ];
   static const List<Project> projects = [

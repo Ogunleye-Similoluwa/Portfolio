@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/utils/app_enums.dart';
 import '../../../../core/utils/app_extensions.dart';
@@ -15,21 +14,11 @@ class ContactForm extends StatefulWidget {
 }
 
 class _ContactFormState extends State<ContactForm> {
-  late GlobalKey<FormState> _formKey;
-  late TextEditingController _emailController;
-  late TextEditingController _messageController;
-  late TextEditingController _nameController;
-  late TextEditingController _subjectController;
-
-  @override
-  void initState() {
-    super.initState();
-    _formKey = GlobalKey();
-    _emailController = TextEditingController();
-    _messageController = TextEditingController();
-    _nameController = TextEditingController();
-    _subjectController = TextEditingController();
-  }
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _messageController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _subjectController = TextEditingController();
 
   @override
   void dispose() {
@@ -42,63 +31,39 @@ class _ContactFormState extends State<ContactForm> {
 
   Future<void> _sendEmail() async {
     if (_formKey.currentState?.validate() ?? false) {
-      final body = '''
+      try {
+        final Email email = Email(
+          body: '''
 From: ${_nameController.text}
 Email: ${_emailController.text}
 
 Message:
 ${_messageController.text}
-    ''';
-    
-      final emailLaunchUri = Uri(
-        scheme: 'mailto',
-        path: 'osimiloluwa9@gmail.com',
-        queryParameters: {
-          'subject': _subjectController.text,
-          'body': body,
-        },
-      );
+''',
+          subject: _subjectController.text,
+          recipients: ['osimiloluwa9@gmail.com'],
+          isHTML: false,
+        );
 
-      try {
-        if (await canLaunchUrl(emailLaunchUri)) {
-          await launchUrl(emailLaunchUri);
-          _formKey.currentState?.reset();
-          _showSuccessMessage();
-        } else {
-          // Fallback for web
-          final webEmailUrl = 'mailto:osimiloluwa9@gmail.com?subject=${Uri.encodeComponent(_subjectController.text)}&body=${Uri.encodeComponent(body)}';
-          if (await canLaunchUrl(Uri.parse(webEmailUrl))) {
-            await launchUrl(Uri.parse(webEmailUrl));
-            _formKey.currentState?.reset();
-            _showSuccessMessage();
-          } else {
-            _showErrorMessage('Could not open email client. Please try again.');
-          }
-        }
+        await FlutterEmailSender.send(email);
+        _formKey.currentState?.reset();
+        _showMessage('Email sent successfully!', isError: false);
       } catch (e) {
-        _showErrorMessage('Error: ${e.toString()}');
+        _showMessage('Error sending email: ${e.toString()}', isError: true);
       }
     }
   }
 
-  void _showSuccessMessage() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Email client opened successfully!'),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.all(20),
-      ),
-    );
-  }
-
-  void _showErrorMessage([String? message]) {
+  void _showMessage(String message, {bool isError = false}) {
+    if (!mounted) return;
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message ?? 'Could not open email client'),
-        backgroundColor: Colors.red,
+        content: Text(message),
+        backgroundColor: isError ? Colors.red : Colors.green,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(20),
+        duration: const Duration(seconds: 4),
       ),
     );
   }
@@ -115,7 +80,10 @@ ${_messageController.text}
             TextFormField(
               controller: _nameController,
               style: AppStyles.s14,
-              decoration: const InputDecoration(labelText: 'Name'),
+              decoration: const InputDecoration(
+                labelText: 'Name',
+                hintText: 'Enter your name',
+              ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your name';
@@ -127,7 +95,10 @@ ${_messageController.text}
             TextFormField(
               controller: _emailController,
               style: AppStyles.s14,
-              decoration: const InputDecoration(labelText: 'E-mail'),
+              decoration: const InputDecoration(
+                labelText: 'E-mail',
+                hintText: 'Enter your email',
+              ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your email';
@@ -142,7 +113,10 @@ ${_messageController.text}
             TextFormField(
               controller: _subjectController,
               style: AppStyles.s14,
-              decoration: const InputDecoration(labelText: 'Subject'),
+              decoration: const InputDecoration(
+                labelText: 'Subject',
+                hintText: 'Enter message subject',
+              ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a subject';
@@ -156,7 +130,8 @@ ${_messageController.text}
               maxLines: 5,
               style: AppStyles.s14,
               decoration: const InputDecoration(
-                labelText: 'Type a message here...',
+                labelText: 'Message',
+                hintText: 'Type your message here...',
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -165,7 +140,7 @@ ${_messageController.text}
                 return null;
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             CustomButton(
               label: 'Send Message',
               onPressed: _sendEmail,
