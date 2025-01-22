@@ -39,40 +39,77 @@
         <!-- This script adds the flutter initialization JS code -->
         <script src="flutter.js" defer></script>
         <style>
-            .container {
-                margin: 0;
-                position: absolute;
-                width: 100vw;
-                height: 100vh;
+            .loading {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                margin: 0;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
             }
+
             .loader {
-                height: 30vh;
+                border: 3px solid #f3f3f3;
+                border-radius: 50%;
+                border-top: 3px solid #3498db;
+                width: 40px;
+                height: 40px;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
             }
         </style>
         <meta name="referrer" content="no-referrer">
     </head>
 
     <body style="overflow: hidden">
-        <div class="container">
-            <img class="loader" src="assets/loading.gif" />
+        <div id="loading" class="loading">
+            <div class="loader"></div>
         </div>
         <script>
-            window.addEventListener('load', function (ev) {
-                // Download main.dart.js
+            window.addEventListener('load', function() {
+                // Initialize service worker first
+                var serviceWorkerActivated = false;
+                if ('serviceWorker' in navigator) {
+                    window.addEventListener('flutter-first-frame', function() {
+                        navigator.serviceWorker.register('flutter_service_worker.js?v=' + serviceWorkerVersion);
+                    });
+                }
+                
+                // Load Flutter app with timeout
+                var timeoutId = setTimeout(function() {
+                    var loadingElement = document.querySelector('#loading');
+                    if (loadingElement) {
+                        loadingElement.innerHTML = 'Failed to load. Please refresh the page.';
+                    }
+                }, 10000); // 10 second timeout
+
                 _flutter.loader.load({
                     serviceWorker: {
                         serviceWorkerVersion: serviceWorkerVersion,
                     }
+                }).then(function(engineInitializer) {
+                    clearTimeout(timeoutId);
+                    return engineInitializer.initializeEngine();
+                }).then(function(appRunner) {
+                    return appRunner.runApp();
+                }).then(function() {
+                    var loadingElement = document.querySelector('#loading');
+                    if (loadingElement) {
+                        loadingElement.remove();
+                    }
+                }).catch(function(error) {
+                    console.error('Error loading Flutter app:', error);
+                    var loadingElement = document.querySelector('#loading');
+                    if (loadingElement) {
+                        loadingElement.innerHTML = 'Error loading app. Please refresh.';
+                    }
                 });
-            });
-        </script>
-        <script>
-            window.addEventListener('flutter-first-frame', function () {
-                var el = document.getElementsByClassName('container')[0];
-                el.remove();
             });
         </script>
     </body>
