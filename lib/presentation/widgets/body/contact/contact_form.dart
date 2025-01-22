@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/utils/app_enums.dart';
@@ -39,6 +40,69 @@ class _ContactFormState extends State<ContactForm> {
     super.dispose();
   }
 
+  Future<void> _sendEmail() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      final body = '''
+From: ${_nameController.text}
+Email: ${_emailController.text}
+
+Message:
+${_messageController.text}
+    ''';
+    
+      final emailLaunchUri = Uri(
+        scheme: 'mailto',
+        path: 'osimiloluwa9@gmail.com',
+        queryParameters: {
+          'subject': _subjectController.text,
+          'body': body,
+        },
+      );
+
+      try {
+        if (await canLaunchUrl(emailLaunchUri)) {
+          await launchUrl(emailLaunchUri);
+          _formKey.currentState?.reset();
+          _showSuccessMessage();
+        } else {
+          // Fallback for web
+          final webEmailUrl = 'mailto:osimiloluwa9@gmail.com?subject=${Uri.encodeComponent(_subjectController.text)}&body=${Uri.encodeComponent(body)}';
+          if (await canLaunchUrl(Uri.parse(webEmailUrl))) {
+            await launchUrl(Uri.parse(webEmailUrl));
+            _formKey.currentState?.reset();
+            _showSuccessMessage();
+          } else {
+            _showErrorMessage('Could not open email client. Please try again.');
+          }
+        }
+      } catch (e) {
+        _showErrorMessage('Error: ${e.toString()}');
+      }
+    }
+  }
+
+  void _showSuccessMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Email client opened successfully!'),
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.all(20),
+      ),
+    );
+  }
+
+  void _showErrorMessage([String? message]) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message ?? 'Could not open email client'),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(20),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -52,32 +116,59 @@ class _ContactFormState extends State<ContactForm> {
               controller: _nameController,
               style: AppStyles.s14,
               decoration: const InputDecoration(labelText: 'Name'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your name';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _emailController,
               style: AppStyles.s14,
               decoration: const InputDecoration(labelText: 'E-mail'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your email';
+                }
+                if (!value.contains('@')) {
+                  return 'Please enter a valid email';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _subjectController,
               style: AppStyles.s14,
               decoration: const InputDecoration(labelText: 'Subject'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a subject';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 12),
-            TextField(
+            TextFormField(
               controller: _messageController,
               maxLines: 5,
               style: AppStyles.s14,
               decoration: const InputDecoration(
                 labelText: 'Type a message here...',
               ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a message';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 16),
             CustomButton(
-              label: 'Submit',
-              onPressed: () {},
+              label: 'Send Message',
+              onPressed: _sendEmail,
               backgroundColor: AppColors.primaryColor,
               width: _getFormWidth(context.width),
             ),

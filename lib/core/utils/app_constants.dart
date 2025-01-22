@@ -6,49 +6,45 @@ abstract class AppConstants {
   static const double appBarHeight = 80;
   static const List<CustomService> services = [
     CustomService(
-      service: 'FINTECH SOLUTIONS',
+      service: 'MOBILE DEVELOPMENT',
       logo: AppAssets.androidLogo,
       description:
-          'Specialized in developing secure payment systems, digital wallets, and financial services applications with robust security measures.',
+          'Expert Flutter development with clean architecture, beautiful UI/UX, and cross-platform solutions. Specializing in high-performance mobile applications.',
     ),
     CustomService(
-      service: 'MOBILE DEVELOPMENT',
+      service: 'FULL STACK SOLUTIONS',
       logo: AppAssets.uiDesignLogo,
       description:
-          'Expert Flutter development with clean architecture, multiple state management solutions, and third-party integrations.',
+          'End-to-end application development combining Flutter frontend with Spring Boot and Django backends. Building scalable and maintainable solutions.',
     ),
     CustomService(
-      service: 'BACKEND ENGINEERING',
+      service: 'AI INTEGRATION',
       logo: AppAssets.scrappingLogo,
       description:
-          'Building scalable backend services using Spring Boot and Django, with expertise in microservices and database design.',
+          'Implementing cutting-edge AI features including speech recognition, natural language processing, and smart automation. Creating intelligent and interactive applications.',
     ),
   ];
   static const List<Project> projects = [
-     Project(
+    Project(
       name: 'Npod',
       imageUrl: 'PATH_TO_IMAGE',
       description:
-          'Led end-to-end development of a comprehensive transportation platform. Implemented features including trip booking, car hire, traveler code management, and secure Paystack payments. Built both mobile frontend and backend services.',
-      githubRepoLink: 'YOUR_GITHUB_LINK',
-      previewLink: 'YOUR_PREVIEW_LINK',
+          'A comprehensive transportation platform with features like trip booking, car hire, and traveler management. Built with Flutter and integrated with secure payment systems.',
       googlePlay: "https://play.google.com/store/apps/details?id=com.nomadicpod.npod&hl=en_US"
     ),
     Project(
-      name: 'Reals ',
+      name: 'Reals',
       imageUrl: 'PATH_TO_IMAGE',
       description:
-          'Cross-platform mobile fintech application featuring seamless airtime and data top-up services, push notifications, and Paystack payment integration. Implemented real-time operations and optimized performance across iOS and Android.',
-      githubRepoLink: 'YOUR_GITHUB_LINK',
-      previewLink: 'YOUR_PREVIEW_LINK',
+          'Cross-platform mobile application for seamless utility services including airtime, data, and bill payments. Features real-time processing and intuitive user experience.',
+      googlePlay: 'https://play.google.com/apps/testing/com.reals.app.Reals',
     ),
     Project(
-      name: 'Zimi - Music Recognition',
-      imageUrl: 'PATH_TO_YOUR_IMAGE',
+      name: 'Zimi',
+      imageUrl: 'PATH_TO_IMAGE',
       description:
-          'A sophisticated music recognition app with ACRCloud integration, synchronized lyrics, and YouTube integration. Features real-time lyrics sync and beautiful particle animations.',
+          'Advanced music recognition app featuring ACRCloud integration, real-time lyrics synchronization, and YouTube video integration. Includes beautiful particle animations and offline support.',
       githubRepoLink: 'YOUR_GITHUB_LINK',
-      previewLink: 'YOUR_PREVIEW_LINK',
     ),
     Project(
       name: 'E-Commerce Backend',

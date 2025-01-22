@@ -44,7 +44,7 @@ class ProjectCard extends StatelessWidget {
   const ProjectCard({required this.project, super.key});
 
   String _getGithubUrl(String projectName) {
-    return 'https://github.com/Ogunleye-Similoluwa/$projectName';
+    return 'https://github.com/Ogunleye-Similoluwa/${projectName.split(' ')[0].toLowerCase()}';
   }
 
   Future<void> _launchURL(String? url) async {
@@ -58,69 +58,124 @@ class ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.primaryLight,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryColor.withOpacity(0.1),
-            blurRadius: 10,
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFF1A237E).withOpacity(0.08),
+              const Color(0xFF0D47A1).withOpacity(0.12),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  project.name,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.05),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    project.name,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 0.5,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.code),
-                onPressed: () => _launchURL(_getGithubUrl(project.name)),
-                tooltip: 'View Source Code',
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: Text(
-              project.description,
-              style: const TextStyle(fontSize: 16),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 3,
+                if (project.name != 'Npod' && project.name != 'Reals')
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.code, color: Colors.white, size: 24),
+                      onPressed: () => _launchURL(_getGithubUrl(project.name)),
+                      tooltip: 'View Source Code',
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ),
+              ],
             ),
-          ),
-          const SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              if (project.previewLink != null)
-                TextButton.icon(
-                  icon: const Icon(Icons.remove_red_eye),
-                  label: const Text('Preview'),
-                  onPressed: () => _launchURL(project.previewLink),
+            const SizedBox(height: 16),
+            Expanded(
+              child: Text(
+                project.description,
+                style: TextStyle(
+                  fontSize: 16,
+                  height: 1.6,
+                  color: Colors.white.withOpacity(0.8),
+                  letterSpacing: 0.3,
                 ),
-              if (project.googlePlay != null)
-                TextButton.icon(
-                  icon: const Icon(Icons.play_arrow),
-                  label: const Text('Play Store'),
-                  onPressed: () => _launchURL(project.googlePlay),
-                ),
-            ],
-          ),
-        ],
+                overflow: TextOverflow.ellipsis,
+                maxLines: 3,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (project.previewLink != null)
+                  TextButton.icon(
+                    icon: const Icon(Icons.remove_red_eye, size: 20),
+                    label: const Text('Preview'),
+                    onPressed: () => _launchURL(project.previewLink),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white.withOpacity(0.9),
+                      textStyle: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.5,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                    ),
+                  ),
+                if (project.googlePlay != null) ...[
+                  const SizedBox(width: 12),
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.play_arrow, size: 20),
+                    label: const Text('Play Store'),
+                    onPressed: () => _launchURL(project.googlePlay),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.white.withOpacity(0.1),
+                      textStyle: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.5,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

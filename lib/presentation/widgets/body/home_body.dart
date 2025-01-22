@@ -193,86 +193,115 @@ class FeaturedAppCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
         gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           colors: [
-            AppColors.primaryColor.withOpacity(0.1),
-            AppColors.secondaryColor.withOpacity(0.2),
+            const Color(0xFF1A237E).withOpacity(0.15),
+            const Color(0xFF0D47A1).withOpacity(0.25),
           ],
         ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryColor.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.1),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Live Badge
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: Image.asset(
-                  project.imageUrl,
-                  height: 80,
-                  width: 80,
-                  fit: BoxFit.cover,
-                ),
-              ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
+                  horizontal: 16,
+                  vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.accentSuccess,
-                  borderRadius: BorderRadius.circular(20),
+                  color: const Color(0xFF00C853).withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(30),
                 ),
-                child: const Text(
-                  'LIVE ON PLAY STORE',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(
+                      Icons.play_circle_outline,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      'LIVE ON PLAY STORE',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           
+          // App Name
           Text(
             project.name,
             style: const TextStyle(
-              fontSize: 24,
+              fontSize: 32,
               fontWeight: FontWeight.bold,
+              color: Colors.white,
+              letterSpacing: 0.5,
             ),
           ),
           const SizedBox(height: 16),
           
+          // Description
           Text(
             project.description,
-            style: const TextStyle(fontSize: 16),
+            style: TextStyle(
+              fontSize: 16,
+              height: 1.6,
+              color: Colors.white.withOpacity(0.9),
+              letterSpacing: 0.3,
+            ),
             maxLines: 4,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
           
+          // Action Button
           Center(
-            child: ElevatedButton.icon(
-              onPressed: () => _launchURL(project.googlePlay),
-              icon: const Icon(Icons.play_arrow),
-              label: const Text('Download on Play Store'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: ElevatedButton.icon(
+                onPressed: () => _launchURL(project.googlePlay),
+                icon: const Icon(Icons.play_arrow, size: 24),
+                label: const Text(
+                  'Download on Play Store',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.white.withOpacity(0.2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 20,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                 ),
               ),
             ),
